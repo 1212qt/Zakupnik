@@ -3,10 +3,7 @@ package com.mat.zakupnik.activities
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ExpandableListView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -25,10 +22,8 @@ import kotlin.collections.HashMap
 
 class ShoppingListsActivity : AppCompatActivity(), IShoppingListNotifier {
 
-    private data class Collapsed(var parent : String = "", var child : String = "")
-
     private val TAG = "ShoppingListActivity"
-    private val collapsedItem = Collapsed()
+    private val expandedParents = mutableListOf<String>()
     private lateinit var DIR : String
     private lateinit var HashMapPath : String
     private lateinit var SetPath : String
@@ -40,7 +35,7 @@ class ShoppingListsActivity : AppCompatActivity(), IShoppingListNotifier {
     private lateinit var elvAdapter : ShoppingListAdapter
 
     override fun notifyProductDetailsClicked(name : String) {
-        triggerShoppingItemModificationDialog(name, shoppingListMap.map[collapsedItem.parent]?.get(name))
+        triggerShoppingItemModificationDialog(name, shoppingListMap.map[expandedParents[0]]?.get(name))
     }
 
     override fun notifyChildDeleted(name: String) {
@@ -55,16 +50,21 @@ class ShoppingListsActivity : AppCompatActivity(), IShoppingListNotifier {
     }
 
     override fun notifyParentCollapsed(name: String) {
-        collapsedItem.parent = name
+        expandedParents.remove(name)
+        elvAdapter.setCurrentExpandedParent(if (expandedParents.isEmpty()) "" else expandedParents[0])
+    }
+
+    override fun notifyParentExpanded(name: String) {
+        expandedParents.add(0, name)
+        elvAdapter.setCurrentExpandedParent(if (expandedParents.isEmpty()) "" else expandedParents[0])
     }
 
     override fun notifyChildCollapsed(name: String) {
-        collapsedItem.child = name
-        println()
+
     }
 
     private fun removeChildItem(name : String) {
-        shoppingListMap.map[collapsedItem.parent]?.remove(name)
+        shoppingListMap.map[expandedParents[0]]?.remove(name)
     }
 
     private fun refreshElv() {
@@ -115,7 +115,7 @@ class ShoppingListsActivity : AppCompatActivity(), IShoppingListNotifier {
 
     private fun addItemToShoppingList(itemTitle : String, item : ProductDetails) {
         removeChildItem(itemTitle)
-        shoppingListMap.map[collapsedItem.parent]?.put(itemTitle, item)
+        shoppingListMap.map[expandedParents[0]]?.put(itemTitle, item)
         refreshElv()
     }
 
@@ -125,7 +125,7 @@ class ShoppingListsActivity : AppCompatActivity(), IShoppingListNotifier {
     }
 
     private fun onAddButtonClicked() {
-        if (collapsedItem.parent.isEmpty()) {
+        if (expandedParents.isEmpty()) {
             triggerShoppingListAdditionDialog()
         } else {
             triggerShoppingItemAdditionDialog()
@@ -138,9 +138,17 @@ class ShoppingListsActivity : AppCompatActivity(), IShoppingListNotifier {
         val etShoppingList = dialogLayout.findViewById<EditText>(R.id.activity_shopping_lists_dialog_tv_name)
         val cbLoadFromToBuy = dialogLayout.findViewById<CheckBox>(R.id.activity_shopping_lists_dialog_cb_load_from_to_buy)
 
+        val tvText = etShoppingList.text
+
         AlertDialog.Builder(this)
             .setView(dialogLayout)
-            .setPositiveButton("OK") { _, _ -> addShoppingList(etShoppingList.text.toString(), !cbLoadFromToBuy.isChecked) }
+            .setPositiveButton("OK") { dialog, _ ->
+                if (shoppingListKeysList.contains(tvText.toString())) {
+                    Toast.makeText(this, "Shopping list $tvText already exists", Toast.LENGTH_SHORT).show()
+                    dialog.cancel()
+                } else {
+                    addShoppingList(tvText.toString(), !cbLoadFromToBuy.isChecked) }
+                }
             .setNegativeButton(R.string.activity_to_buy_negative_response_dialog_text) { dialog, _ -> dialog.cancel()}
             .show()
     }

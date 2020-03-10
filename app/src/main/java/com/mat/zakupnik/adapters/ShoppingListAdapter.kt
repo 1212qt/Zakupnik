@@ -1,6 +1,8 @@
 package com.mat.zakupnik.adapters
 
 import android.content.Context
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,7 @@ class ShoppingListAdapter(private val context : Context,
     : BaseExpandableListAdapter() {
 
     private val TAG = "ShoppingListAdapter"
+    private var currentUnderlinedParent = String()
 
     private class SecondLevelExpandableList(private val classContext : Context) : ExpandableListView(classContext) {
         override fun onMeasure(widthMeasureSpec : Int, heightMeasureSpec : Int) {
@@ -50,13 +53,12 @@ class ShoppingListAdapter(private val context : Context,
 
     override fun onGroupCollapsed(groupPosition: Int) {
         super.onGroupCollapsed(groupPosition)
-        expansionNotifier.notifyParentCollapsed("")
+        expansionNotifier.notifyParentCollapsed(expandableListTitle[groupPosition])
     }
 
     override fun onGroupExpanded(groupPosition: Int) {
         super.onGroupExpanded(groupPosition)
-        expansionNotifier.notifyParentCollapsed(expandableListTitle[groupPosition])
-
+        expansionNotifier.notifyParentExpanded(expandableListTitle[groupPosition])
     }
 
     override fun getGroup(groupPosition: Int): Any = expandableListTitle[groupPosition]
@@ -68,7 +70,13 @@ class ShoppingListAdapter(private val context : Context,
         val localConvertView = convertView ?: LayoutInflater.from(context).inflate(R.layout.group_item_shopping_lists, null)
 
         val tvHeader = localConvertView.findViewById<TextView>(R.id.activity_shopping_lists_item_tv_group_header)
-        tvHeader.text = name
+        if (currentUnderlinedParent == name) {
+            val content = SpannableString(name)
+            content.setSpan(UnderlineSpan(), 0, content.length, 0)
+            tvHeader.text = content
+        } else {
+            tvHeader.text = name
+        }
 
         val btnDelete = localConvertView.findViewById<Button>(R.id.activity_shopping_lists_item_btn_delete)
         btnDelete.setOnClickListener{
@@ -81,4 +89,8 @@ class ShoppingListAdapter(private val context : Context,
 
     override fun hasStableIds(): Boolean = false
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean = true
+
+    fun setCurrentExpandedParent(name: String) {
+        currentUnderlinedParent = name
+    }
 }
