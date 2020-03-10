@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Zakupnik</string>
+    <string name="activity_start_btn_toBuy_text">do kupienia</string>
+    <string name="activity_start_btn_shoppingLists_text">listy zakupów</string>
+    <string name="activity_start_btn_granary_text">spichlerz</string>
+    <string name="activity_to_buy_tv_header_text">Produkty do kupienia</string>
+    <string name="activity_to_buy_negative_response_dialog_text">Anuluj</string>
+    <string name="activity_to_buy_product_name_dialog_text">Podaj nazwę produktu</string>
+    <string name="activity_shopping_lists_item_tv_price_name_text">Nazwa:</string>
+    <string name="activity_shopping_lists_item_tv_price_header_text">Cena:</string>
+    <string name="activity_shopping_lists_item_tv_expiry_date_header_text">Data ważności:</string>
+    <string name="activity_shopping_lists_item_tv_quantity_header_text">Ilość:</string>
+    <string name="activity_shopping_lists_item_tv_volume_header_text">Objętość:</string>
+    <string name="activity_shopping_lists_tv_header_text">Listy zakupów</string>
+    <string name="activity_shopping_new_shopping_list_dialog_tv_hint">Podaj nazwę listy zakupów</string>
+    <string name="activity_shopping_new_shopping_list_dialog_cb_text">Załaduj produkty do kupienia</string>
+    <string name="activity_granary_tv_header_text">Spichlerz</string>
+
+
+</resources>

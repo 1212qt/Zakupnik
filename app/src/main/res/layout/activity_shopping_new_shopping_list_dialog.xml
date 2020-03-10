@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/activity_shopping_lists_dialog_tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:gravity="center"
+        android:hint="@string/activity_shopping_new_shopping_list_dialog_tv_hint"
+        android:text=""
+        android:textSize="24sp" />
+
+    <CheckBox
+        android:id="@+id/activity_shopping_lists_dialog_cb_load_from_to_buy"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:text="@string/activity_shopping_new_shopping_list_dialog_cb_text" />
+</LinearLayout>
